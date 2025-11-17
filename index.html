@@ -9,7 +9,7 @@
         :root {
             --neon-purple: #9d4edd;
             --neon-purple-light: #c77dff;
-            --dark-bg: #000000; /* Changed to pure black */
+            --dark-bg: #000000;
             --card-bg: #1a1a1a;
             --text-light: #ffffff;
             --text-dim: #a0a0a0;
@@ -23,7 +23,7 @@
         }
 
         body {
-            background-color: var(--dark-bg); /* Pure black background */
+            background-color: var(--dark-bg);
             color: var(--text-light);
             min-height: 100vh;
             overflow-x: hidden;
@@ -40,13 +40,12 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: #000000; /* Pure black background */
+            background: #000000;
             z-index: 1000;
         }
 
-        /* Removed the video background */
         .login-video {
-            display: none; /* Hide the video completely */
+            display: none;
         }
 
         .login-form {
@@ -119,7 +118,7 @@
             box-shadow: 0 5px 20px rgba(157, 78, 221, 0.4);
         }
 
-        /* Loading Animation - Modified to fit video aspect ratio */
+        /* Loading Animation */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -140,13 +139,48 @@
         .loading-video-container {
             width: 80%;
             max-width: 800px;
-            aspect-ratio: 16/9; /* Standard video aspect ratio */
+            aspect-ratio: 16/9;
             overflow: hidden;
             border-radius: 10px;
             box-shadow: 0 0 30px rgba(157, 78, 221, 0.5);
+            position: relative;
         }
 
         .loading-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Dashboard Animation Overlay */
+        .dashboard-animation-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: black;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1999;
+        }
+
+        .dashboard-animation-overlay.active {
+            display: flex;
+        }
+
+        .dashboard-video-container {
+            width: 80%;
+            max-width: 800px;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(157, 78, 221, 0.5);
+            position: relative;
+        }
+
+        .dashboard-video {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -157,7 +191,7 @@
             display: none;
             min-height: 100vh;
             flex-direction: column;
-            background-color: #000000; /* Pure black background */
+            background-color: #000000;
         }
 
         .main-app.active {
@@ -507,7 +541,8 @@
                 padding: 30px 20px;
             }
 
-            .loading-video-container {
+            .loading-video-container,
+            .dashboard-video-container {
                 width: 95%;
             }
         }
@@ -697,12 +732,46 @@
         .error-message.show {
             display: block;
         }
+
+        /* Play button overlay for videos */
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(157, 78, 221, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .play-overlay:hover {
+            background: rgba(157, 78, 221, 1);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .play-overlay i {
+            font-size: 2rem;
+            color: white;
+            margin-left: 5px;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 <body>
     <!-- Login Page -->
     <div class="login-container" id="loginPage">
-        <!-- Video background is now hidden with CSS -->
         <video class="login-video" autoplay muted loop>
             <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" type="video/mp4">
         </video>
@@ -726,9 +795,28 @@
     <!-- Loading Animation -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-video-container">
-            <video class="loading-video" id="loadingVideo" autoplay>
-                <source src="https://d.uguu.se/RDRMfqDj.mp4" type="video/mp4">
-            </video>
+            <div class="video-container">
+                <video class="loading-video" id="loadingVideo" playsinline>
+                    <source src="https://d.uguu.se/RDRMfqDj.mp4" type="video/mp4">
+                </video>
+                <div class="play-overlay" id="loadingPlayBtn" style="display: none;">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Animation -->
+    <div class="dashboard-animation-overlay" id="dashboardAnimationOverlay">
+        <div class="dashboard-video-container">
+            <div class="video-container">
+                <video class="dashboard-video" id="dashboardVideo" playsinline>
+                    <source src="https://h.uguu.se/lRYKBYPs.mp4" type="video/mp4">
+                </video>
+                <div class="play-overlay" id="dashboardPlayBtn" style="display: none;">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -768,8 +856,7 @@
             <section id="dashboard" class="content-section active">
                 <div class="section-card">
                     <h2 class="section-title"><i class="fas fa-bolt"></i> Dashboard</h2>
-                    <p>"aku di takdirkan untuk menang,bukan menjadi seorang
-                    pecundang</p>
+                    <p>Selamat datang di DEVIST IND! Portal digital Anda untuk berbagai layanan dan tools.</p>
                 </div>
 
                 <!-- Server Stats -->
@@ -1065,14 +1152,44 @@
     </div>
 
     <script>
-        // User database (in real app, this would be on server)
+        // User database with updated credentials
         const users = {
-            'admin': { password: 'admin123', role: 'OWNER', name: 'Administrator', expiry: 'Unlimited' },
+            'dimsz': { password: 'dimszs', role: 'OWNER', name: 'DEVIST Owner', expiry: 'Unlimited' },
+            'admin': { password: 'admin123', role: 'ADMIN', name: 'Administrator', expiry: '31 Desember 2024' },
             'user': { password: 'user123', role: 'USER', name: 'Regular User', expiry: '31 Desember 2024' },
             'pt': { password: 'pt123', role: 'PT', name: 'PT Company', expiry: '31 Juni 2025' }
         };
 
         let currentUser = null;
+        let firstLogin = true;
+
+        // Function to play video with user interaction
+        function playVideoWithInteraction(video, playBtn, enableSound = false) {
+            // Try to play video directly first
+            video.play().then(() => {
+                if (enableSound) {
+                    video.muted = false;
+                    video.volume = 0.5;
+                }
+                if (playBtn) {
+                    playBtn.style.display = 'none';
+                }
+            }).catch((error) => {
+                console.log('Autoplay prevented, showing play button');
+                // Show play button if autoplay is blocked
+                if (playBtn) {
+                    playBtn.style.display = 'flex';
+                    playBtn.onclick = function() {
+                        video.play();
+                        if (enableSound) {
+                            video.muted = false;
+                            video.volume = 0.5;
+                        }
+                        playBtn.style.display = 'none';
+                    };
+                }
+            });
+        }
 
         // Login form handler
         document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -1093,18 +1210,36 @@
                 const loadingOverlay = document.getElementById('loadingOverlay');
                 loadingOverlay.classList.add('active');
                 
-                // Play loading video with sound
+                // Play loading video
                 const loadingVideo = document.getElementById('loadingVideo');
-                loadingVideo.muted = false;
-                loadingVideo.volume = 0.5;
+                const loadingPlayBtn = document.getElementById('loadingPlayBtn');
+                loadingVideo.currentTime = 0;
+                playVideoWithInteraction(loadingVideo, loadingPlayBtn, true);
                 
                 // Wait for video to finish
                 loadingVideo.addEventListener('ended', function() {
                     loadingOverlay.classList.remove('active');
-                    document.getElementById('mainApp').classList.add('active');
                     
-                    // Update profile with user data
-                    updateProfile();
+                    // Show dashboard animation for first login
+                    if (firstLogin) {
+                        const dashboardAnimation = document.getElementById('dashboardAnimationOverlay');
+                        dashboardAnimation.classList.add('active');
+                        
+                        const dashboardVideo = document.getElementById('dashboardVideo');
+                        const dashboardPlayBtn = document.getElementById('dashboardPlayBtn');
+                        dashboardVideo.currentTime = 0;
+                        playVideoWithInteraction(dashboardVideo, dashboardPlayBtn, false);
+                        
+                        dashboardVideo.addEventListener('ended', function() {
+                            dashboardAnimation.classList.remove('active');
+                            document.getElementById('mainApp').classList.add('active');
+                            updateProfile();
+                            firstLogin = false;
+                        });
+                    } else {
+                        document.getElementById('mainApp').classList.add('active');
+                        updateProfile();
+                    }
                 });
                 
             } else {
@@ -1134,7 +1269,7 @@
                 section.classList.remove('active');
             });
             
-            // Show the selected section
+            // Show selected section
             document.getElementById(sectionId).classList.add('active');
             
             // Update active nav item
